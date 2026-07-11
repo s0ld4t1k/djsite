@@ -7,10 +7,13 @@ menu=[{'title':'About','url_name':'about'},{'title':'Add Post','url_name':'add_p
 
 def index(request):
     posts=Women.objects.all()
+    cats=Category.objects.all()
     context={
         'title':'Home page',
         'menu':menu,
-        'posts':posts
+        'posts':posts,
+        'cats':cats,
+        'cat_selected':0
     }
     return render(request,'women/index.html',context=context)
 
@@ -30,6 +33,22 @@ def post(request,post_id):
     post=Women.objects.get(id=post_id)
 
     return HttpResponse(f'<h1>{post.title}</h1><p>{post.content}</p>')
+
+def category(request,cat_id):
+    posts=Women.objects.filter(cat_id=cat_id)
+    cats=Category.objects.all()
+
+    if len(posts)==0:
+        raise Http404()
+
+    context={
+        'title':'Posts by Category',
+        'menu':menu,
+        'posts':posts,
+        'cats':cats,
+        'cat_selected':cat_id
+    }
+    return render(request,'women/index.html',context=context)
 
 
 def categories(request,cat):
