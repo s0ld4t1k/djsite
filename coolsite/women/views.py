@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseNotFound,Http404
-from django.shortcuts import redirect,render
+from django.shortcuts import redirect,render,get_object_or_404
 from .models import *
 
 menu=[{'title':'About','url_name':'about'},{'title':'Add Post','url_name':'add_page'},{'title':'Contact Us','url_name':'contact'},{'title':'Login','url_name':'login'}]
@@ -29,24 +29,32 @@ def contact(request):
 def login(request):
     return HttpResponse('Login')
 
-def post(request,post_id):
-    post=Women.objects.get(id=post_id)
+def post(request,post_slug):
+    post=get_object_or_404(Women,slug=post_slug)
 
-    return HttpResponse(f'<h1>{post.title}</h1><p>{post.content}</p>')
+    context={
+        'post':post,
+        'title':post.title,
+        'cat_selected':post.cat_id,
+        'menu':menu
+    }
 
-def category(request,cat_id):
-    posts=Women.objects.filter(cat_id=cat_id)
+    return render(request,'women/post.html',context=context)
+
+def category(request,cat_slug):
+    cat=get_object_or_404(Category,slug=cat_slug)
+    posts=Women.objects.filter(cat_id=cat.id)
     cats=Category.objects.all()
 
     if len(posts)==0:
         raise Http404()
 
     context={
-        'title':'Posts by Category',
+        'title':cat.name,
         'menu':menu,
         'posts':posts,
         'cats':cats,
-        'cat_selected':cat_id
+        'cat_selected':cat.id
     }
     return render(request,'women/index.html',context=context)
 
