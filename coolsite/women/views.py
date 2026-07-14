@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseNotFound,Http404
 from django.shortcuts import redirect,render,get_object_or_404
 from .models import *
+from .forms import *
 
 menu=[{'title':'About','url_name':'about'},{'title':'Add Post','url_name':'add_page'},{'title':'Contact Us','url_name':'contact'},{'title':'Login','url_name':'login'}]
 
@@ -21,7 +22,22 @@ def about(request):
     return render(request,'women/about.html',{'title':'About page','menu':menu})
 
 def addpost(request):
-    return HttpResponse('Add post')
+    if request.method=='POST':
+        form=AddPostForm(request.POST)
+        if form.is_valid():
+            try:
+                Women.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None,'Error adding post')
+    else:
+        form=AddPostForm()
+    context={
+        'form':form,
+        'menu':menu,
+        'title':'Add post'   
+    }
+    return render(request,'women/addpost.html',context=context)
 
 def contact(request):
     return HttpResponse('Contact Us')
