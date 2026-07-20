@@ -7,6 +7,8 @@ from .utils import *
 from django.views.generic import ListView,DetailView,CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.urls import reverse_lazy
 
 
 class WomenHome(DataMixin,ListView):
@@ -70,9 +72,15 @@ class AddPost(LoginRequiredMixin,DataMixin,CreateView):
 #         'cat_selected':0
 #     }
 #     return render(request,'women/index.html',context=context)
-@login_required
+
 def about(request):
-    return render(request,'women/about.html',{'title':'About page','menu':menu})
+    contact_list=Women.objects.all()
+    paginator=Paginator(contact_list,3)
+
+    page_number=request.GET.get('page')
+    page_obj=paginator.get_page(page_number)
+
+    return render(request,'women/about.html',{'page_obj':page_obj,'title':'About page','menu':menu})
 
 # def addpost(request):
 #     if request.method=='POST':
@@ -97,6 +105,17 @@ def contact(request):
 
 def login(request):
     return HttpResponse('Login')
+
+class RegisterUser(DataMixin,CreateView):
+    form_class=RegisterUserForm
+    template_name='women/register.html'
+    success_url=reverse_lazy('login')
+
+    def get_context_data(self,*,object_list=None,**kwargs):
+        context=super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Register')
+        return dict(list(context.items())+list(c_def.items()))
+
 
 # def post(request,post_slug):
 #     post=get_object_or_404(Women,slug=post_slug)

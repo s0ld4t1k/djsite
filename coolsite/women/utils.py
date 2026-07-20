@@ -1,9 +1,14 @@
 from .models import *
 from django.db.models import *
 
-menu=[{'title':'About','url_name':'about'},{'title':'Add Post','url_name':'add_page'},{'title':'Contact Us','url_name':'contact'},{'title':'Login','url_name':'login'}]
+menu=[{'title':'About','url_name':'about'},
+{'title':'Add Post','url_name':'add_page'},
+{'title':'Contact Us','url_name':'contact'},
+]
 
 class DataMixin:
+    paginate_by=3
+
     def get_user_context(self,**kwargs):
         context=kwargs
         cats=Category.objects.annotate(Count('women'))
