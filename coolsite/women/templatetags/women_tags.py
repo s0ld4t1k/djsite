@@ -11,10 +11,10 @@ def get_categories(filter=None):
         return Category.objects.all()
         
 
-@register.inclusion_tag('women/list_categories.html')
-def show_categories(sort=None, cat_selected=0):
-    if sort:
-        cats=Category.objects.order_by(sort)
-    else:
-        cats=Category.objects.all()
-    return {'cats':cats,'cat_selected':cat_selected}
+# @register.inclusion_tag('women/list_categories.html')
+# def show_categories(sort=None, cat_selected=0):
+#     if sort:
+#         cats=Category.objects.order_by(sort)
+#     else:
+#         cats=Category.objects.all()
+#     return {'cats':cats,'cat_selected':cat_selected}
