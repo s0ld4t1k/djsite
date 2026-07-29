@@ -20,7 +20,7 @@ from women.views import *
 from coolsite import settings
 from django.conf.urls.static import static
 from django.views.static import serve as mediaserve
-from django.conf.urls import url
+from django.urls import re_path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,8 +34,8 @@ if settings.DEBUG:
     urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 else:
     urlpatterns+=[
-        url(f'^{settings.MEDIA_URL.lstrip("/")}(?P<path>.*)$',mediaserve,{'document_root':settings.MEDIA_ROOT}),
-        url(f'^{settings.STATIC_URL.lstrip("/")}(?P<path>.*)$',mediaserve,{'document_root':settings.STATIC_ROOT})
+        re_path(f'^{settings.MEDIA_URL.lstrip("/")}(?P<path>.*)$',mediaserve,{'document_root':settings.MEDIA_ROOT}),
+        re_path(f'^{settings.STATIC_URL.lstrip("/")}(?P<path>.*)$',mediaserve,{'document_root':settings.STATIC_ROOT})
     ]
 
 handler404=pageNotFound
